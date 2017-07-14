@@ -1,0 +1,11 @@
+aliyun :
+  #阿里云授权KEY
+  accessKey : t1hd1iYdsfLQEXuI
+  #阿里云秘钥
+  secretKey : VNOijOCsZhR7hPDAa4fHkUDWVPFqRU
+
+  mq :
+    suffix : dev
+    consumer:
+      defaultThread : 10
+      defaultModel : CLUSTERING
