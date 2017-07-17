@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mq.aliyun.util;
+package com.github.mq.aliyun.consumer.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+/**
+ * Created by wangziqing on 17/7/17.
+ */
 public class Lambdas {
     private static final Logger log = LoggerFactory.getLogger(Lambdas.class);
     

@@ -11,14 +11,8 @@
 
     <groupId>com.github.onepiecex</groupId>
     <artifactId>mq-aliyun-consumer-spring-boot-starter</artifactId>
-    <version>1.0</version>
 
     <dependencies>
-        <dependency>
-            <groupId>com.aliyun.openservices</groupId>
-            <artifactId>ons-client</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -26,20 +20,8 @@
 
         <dependency>
             <groupId>com.github.onepiecex</groupId>
-            <artifactId>mq-aliyun-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.esotericsoftware.reflectasm</groupId>
-            <artifactId>reflectasm</artifactId>
-            <version>1.09</version>
+            <artifactId>mq-aliyun-consumer</artifactId>
+            <version>${mq.aliyun.version}</version>
         </dependency>
     </dependencies>
 
