@@ -1,7 +1,7 @@
 package com.github.mq.aliyun.consumer;
 
-import com.github.mq.aliyun.util.ControllerMethods;
-import com.github.mq.aliyun.util.WithControllerMethod;
+import com.github.mq.aliyun.consumer.util.ControllerMethods;
+import com.github.mq.aliyun.consumer.util.WithControllerMethod;
 
 /**
  * Created by wangziqing on 17/7/13.

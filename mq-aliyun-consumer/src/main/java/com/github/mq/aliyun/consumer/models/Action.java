@@ -1,4 +1,4 @@
-package com.github.mq.aliyun.models;
+package com.github.mq.aliyun.consumer.models;
 
 /**
  * Created by wangziqing on 17/7/13.

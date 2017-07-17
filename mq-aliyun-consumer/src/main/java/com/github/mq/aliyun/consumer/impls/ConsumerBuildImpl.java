@@ -1,9 +1,9 @@
 package com.github.mq.aliyun.consumer.impls;
 
 import com.github.mq.aliyun.consumer.ConsumerBuild;
-import com.github.mq.aliyun.models.ConsumerId;
-import com.github.mq.aliyun.util.ControllerMethods;
-import com.github.mq.aliyun.util.LambdaRoute;
+import com.github.mq.aliyun.consumer.models.ConsumerId;
+import com.github.mq.aliyun.consumer.util.ControllerMethods;
+import com.github.mq.aliyun.consumer.util.LambdaRoute;
 
 /**
  * Created by wangziqing on 17/7/13.

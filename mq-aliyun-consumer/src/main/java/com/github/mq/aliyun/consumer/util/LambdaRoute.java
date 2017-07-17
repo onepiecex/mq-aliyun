@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mq.aliyun.util;
+package com.github.mq.aliyun.consumer.util;
 
 
 import java.lang.reflect.Method;
 import java.util.Optional;
-
+/**
+ * Created by wangziqing on 17/7/17.
+ */
 public class LambdaRoute {
     
     private final Method functionalMethod;
@@ -42,7 +44,7 @@ public class LambdaRoute {
     public Optional<Object> getTargetObject() {
         return targetObject;
     }
-    
+
     static public LambdaRoute resolve(ControllerMethods.ControllerMethod controllerMethod) {
         try {
             Lambdas.LambdaInfo lambdaInfo = Lambdas.reflect(controllerMethod);
