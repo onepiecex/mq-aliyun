@@ -74,7 +74,7 @@ public class ProducerFactoryImpl implements ProducerFactory {
         Message msg = new Message(
                 producerAble.getTopic() + suffix,
                 // 可理解为Gmail中的标签，对消息进行再归类，方便Consumer指定过滤条件在ONS服务器过滤
-                producerAble.getTag() + suffix,
+                producerAble.getTag(),
                 // Message Body
                 // 任何二进制形式的数据， ONS不做任何干预，
                 // 需要Producer与Consumer协商好一致的序列化和反序列化方式
