@@ -10,7 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.onepiecex</groupId>
-    <artifactId>mq-aliyun-consumer-spring-boot-starter</artifactId>
+    <artifactId>mq-aliyun-producer-spring-boot-starter</artifactId>
+    <version>1.0</version>
 
     <dependencies>
         <dependency>
@@ -22,17 +23,5 @@
             <groupId>com.github.onepiecex</groupId>
             <artifactId>mq-aliyun-core</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.esotericsoftware.reflectasm</groupId>
-            <artifactId>reflectasm</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-
     </dependencies>
-
 </project>

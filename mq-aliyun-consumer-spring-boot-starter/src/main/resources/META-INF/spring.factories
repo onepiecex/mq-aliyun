@@ -1,2 +1,2 @@
 org.springframework.context.ApplicationListener=\
-com.github.mq.aliyun.events.ReadyEvent
+com.github.mq.consumer.ReadyEvent

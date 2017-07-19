@@ -8,10 +8,9 @@
     <artifactId>mq-aliyun</artifactId>
     <version>1.0</version>
     <modules>
-        <module>mq-aliyun-consumer-spring-boot-starter</module>
         <module>mq-aliyun-core</module>
-        <module>mq-aliyun-producer</module>
-        <module>mq-aliyun-consumer</module>
+        <module>mq-aliyun-consumer-spring-boot-starter</module>
+        <module>mq-aliyun-producer-spring-boot-starter</module>
     </modules>
 
 
@@ -142,11 +141,6 @@
                 <version>${mq.aliyun.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.github.onepiecex</groupId>
-                <artifactId>mq-aliyun-consumer</artifactId>
-                <version>${mq.aliyun.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
