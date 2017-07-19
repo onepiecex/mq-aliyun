@@ -139,13 +139,14 @@ public class ProducerFactoryImpl implements ProducerFactory {
     public Producer get(String pid) {
         Producer producer;
         if (null == (producer = producerMap.get(pid))) {
+            String pidsuffix = pid + suffix;
             Properties properties = new Properties();
             // AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
             properties.put(PropertyKeyConst.AccessKey, accessKey);
             // SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
             properties.put(PropertyKeyConst.SecretKey, secretKey);
             //您在控制台创建的Producer ID
-            properties.put(PropertyKeyConst.ProducerId, pid + suffix);
+            properties.put(PropertyKeyConst.ProducerId, pidsuffix);
             //设置发送超时时间，单位毫秒
             properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, sendTimeOut);
 
@@ -153,7 +154,7 @@ public class ProducerFactoryImpl implements ProducerFactory {
             producerMap.put(pid, producer);
             // 在发送消息前，必须调用start方法来启动Producer，只需调用一次即可。
             producer.start();
-            logger.info(String.format("生产者启动成功: %s", pid));
+            logger.info(String.format("生产者启动成功: %s", pidsuffix));
         }
         return producer;
     }
