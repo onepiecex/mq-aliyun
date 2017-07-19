@@ -52,36 +52,34 @@ public class ConsumerRun extends Thread {
         properties.put(PropertyKeyConst.ConsumeThreadNums, consumerOptional.getConsumeThread());
         properties.put(PropertyKeyConst.MessageModel, consumerOptional.getConsumerModel());
         properties.put(PropertyKeyConst.MaxReconsumeTimes, consumerOptional.getMaxReconsume());
-
+        properties.put(PropertyKeyConst.SuspendTimeMillis,consumerOptional.getSuspendTime());
         String tags = consumerId.getTags();
+
+        if(tags.contains("||")){
+            tags = tags.substring(0,tags.length()-2);
+        }
+        logger.info("发现频道 CID: {}  订阅TOPIC: {}  TAG: {}", cid, topic, tags);
+
         if (consumerId.isOrdered()) {
             properties.put(PropertyKeyConst.SuspendTimeMillis, consumerOptional.getSuspendTime());
-
             OrderConsumer orderConsumer = ONSFactory.createOrderedConsumer(properties);
-            orderConsumer.subscribe(topic,tags,((message, context) ->{
-                if (dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.CommitMessage)) {
-                    return OrderAction.Success;
-                } else {
-                    return OrderAction.Suspend;
-                }
-            } ));
+            orderConsumer.subscribe(topic,tags,((message, context) ->
+                    dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.CommitMessage)?
+                            OrderAction.Success : OrderAction.Suspend
+            ));
             orderConsumer.start();
-            logger.info(String.format("消费者开始工作(分区顺序模式)... 消费模式:%s, cid:%s, topic:%s 监听线程数:%s",
-                    consumerOptional.getConsumerModel(), cid, topic, consumerOptional.getConsumeThread()));
-
         } else {
             Consumer consumer = ONSFactory.createConsumer(properties);
-            consumer.subscribe(topic, tags, (message, context) -> {
-                if (dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.CommitMessage)) {
-                    return com.aliyun.openservices.ons.api.Action.CommitMessage;
-                } else {
-                    return com.aliyun.openservices.ons.api.Action.ReconsumeLater;
-                }
-            });
+            consumer.subscribe(topic, tags, (message, context) ->
+                    dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.CommitMessage)?
+                            com.aliyun.openservices.ons.api.Action.CommitMessage : com.aliyun.openservices.ons.api.Action.ReconsumeLater
+            );
             consumer.start();
-            logger.info(String.format("消费者开始工作... 消费模式:%s, cid:%s, topic:%s 监听线程数:%s",
-                    consumerOptional.getConsumerModel(), cid, topic, consumerOptional.getConsumeThread()));
-        }
+       }
+        logger.info("消费者启动成功 -->  : CID: {}({}) , 消费模式: {} , 消费线程数: {} , 最大重试次数: {} {} , 订阅 TOPIC: {} TAG: {}",
+                cid, consumerId.isOrdered()?"有序":"无序",
+                consumerOptional.getConsumerModel(), consumerOptional.getConsumeThread(), consumerOptional.getMaxReconsume(),
+                consumerId.isOrdered()?", 重试前的等待时间:"+consumerOptional.getSuspendTime()+"毫秒":"",topic,tags);
     }
 
 
@@ -92,8 +90,7 @@ public class ConsumerRun extends Thread {
         }
         int reconsume = tag.getReconsume() == null ? defaultReconsume : tag.getReconsume();
         if (message.getReconsumeTimes() > reconsume) {
-            logger.warn(String.format("超过允许的最大重试次数。 允许的重试次数:%s, 当前重试次数:%s",
-                    reconsume, message.getReconsumeTimes()));
+            logger.warn("超过允许的最大重试次数。 允许的重试次数: {}, 当前重试次数: {}", reconsume, message.getReconsumeTimes()) ;
             return Action.CommitMessage;
         }
         ArgumentExtractor[] extractors = tag.getArgumentExtractors();

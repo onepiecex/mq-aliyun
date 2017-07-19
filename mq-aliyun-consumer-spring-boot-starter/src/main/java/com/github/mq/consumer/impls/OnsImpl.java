@@ -57,6 +57,7 @@ public class OnsImpl implements Ons {
                 Object invokeObj = ArgumentExtractors.instantiateComponent(beanFactory, tag.getInvokeCls(), null);
                 tagEntry.getValue().setInvokeObject(invokeObj);
             }
+
             new ConsumerRun(accessKey, secretKey, suffix, consumerId).start();
         });
     }

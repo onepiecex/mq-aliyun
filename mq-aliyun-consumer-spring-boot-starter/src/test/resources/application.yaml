@@ -1,0 +1,15 @@
+aliyun :
+  #阿里云授权KEY
+  accessKey : XXX
+  #阿里云秘钥
+  secretKey : XXX
+
+  mq :
+    suffix : _test
+    consumer :
+      defaultThread : 10
+      defaultModel : CLUSTERING
+      defaultMaxReconsume : 20
+
+    producer :
+      sendTimeOut : 1000
