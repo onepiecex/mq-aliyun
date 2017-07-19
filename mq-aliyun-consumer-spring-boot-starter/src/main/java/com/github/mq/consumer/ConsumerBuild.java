@@ -9,4 +9,5 @@ import com.github.mq.consumer.util.WithControllerMethod;
 public interface ConsumerBuild extends WithControllerMethod<ConsumerBuild> {
     ConsumerBuild subscribeTopic(String topic);
     ConsumerBuild subscribeTag(String tag, ControllerMethods.ControllerMethod controllerMethod);
+
 }

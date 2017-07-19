@@ -19,4 +19,9 @@ public interface WithControllerMethod<T> {
     default <A,B> T subscribeTag(String tag, ControllerMethods.ControllerMethod2<A, B> controllerMethod) {
         return subscribeTag(tag,(ControllerMethods.ControllerMethod)controllerMethod);
     }
+
+    default <A,B,C> T subscribeTag(String tag, ControllerMethods.ControllerMethod3<A,B,C> controllerMethod) {
+        return subscribeTag(tag,(ControllerMethods.ControllerMethod)controllerMethod);
+    }
+
 }

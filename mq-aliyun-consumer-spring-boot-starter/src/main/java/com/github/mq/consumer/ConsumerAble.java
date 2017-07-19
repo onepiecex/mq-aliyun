@@ -9,3 +9,4 @@ public interface ConsumerAble {
 
     void init(Ons ons);
 }
+
