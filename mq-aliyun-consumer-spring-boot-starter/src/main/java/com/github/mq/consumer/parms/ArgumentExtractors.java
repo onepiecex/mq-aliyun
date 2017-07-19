@@ -26,7 +26,7 @@ public class ArgumentExtractors {
 
     private static final Logger logger = LoggerFactory.getLogger(ArgumentExtractors.class);
 
-    private static  final ArgumentExtractor defaultExtractor;
+    public static  final ArgumentExtractor defaultExtractor;
 
     static {
         Iterator<DefaultArgumentExtractor> producerServiceLoader = ServiceLoader.load(DefaultArgumentExtractor.class).iterator();
@@ -58,9 +58,6 @@ public class ArgumentExtractors {
                     return extractor;
                 }
             }
-        }
-        if(extractor == null){
-            extractor = defaultExtractor;
         }
         return extractor;
     }

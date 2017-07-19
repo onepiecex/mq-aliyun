@@ -46,12 +46,19 @@ public class ConsumerId {
                 .getParameterAnnotations();
 
         ArgumentExtractor[] extractors = new ArgumentExtractor[parmTypes.length];
+
         for (int i = 0; i < parmTypes.length; i++) {
             Class cls = parmTypes[i];
             if (Optional.class.isAssignableFrom(cls)) {
                 throw new RuntimeException(String.format("%s : 不支持反序列化Optional类型", method));
             }
             extractors[i] = ArgumentExtractors.getArgumentExtractor(cls, paramAnnotations[i], beanFactory);
+        }
+        for(int i=0;i<extractors.length;i++){
+            if(extractors[i] == null){
+                extractors[i] = ArgumentExtractors.defaultExtractor;
+                break;
+            }
         }
         return extractors;
     }
