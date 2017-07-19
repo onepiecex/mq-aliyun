@@ -20,9 +20,19 @@
 
         <dependency>
             <groupId>com.github.onepiecex</groupId>
-            <artifactId>mq-aliyun-consumer</artifactId>
-            <version>${mq.aliyun.version}</version>
+            <artifactId>mq-aliyun-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware.reflectasm</groupId>
+            <artifactId>reflectasm</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
