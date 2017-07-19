@@ -1,9 +1,9 @@
-package com.github.mq.producer.springboot;
+package com.github.mq.producer;
 
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Sets;
 import com.github.mq.core.scan.ClassScanner;
-import com.github.mq.producer.springboot.impls.ProducerFactoryImpl;
+import com.github.mq.producer.impls.ProducerFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;

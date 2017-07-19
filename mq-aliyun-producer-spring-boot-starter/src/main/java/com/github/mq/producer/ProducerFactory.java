@@ -1,4 +1,4 @@
-package com.github.mq.producer.springboot;
+package com.github.mq.producer;
 
 import com.aliyun.openservices.ons.api.Producer;
 import com.aliyun.openservices.ons.api.SendCallback;

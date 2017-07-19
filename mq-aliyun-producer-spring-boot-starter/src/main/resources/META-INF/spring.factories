@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.github.mq.producer.springboot.ProducerInit
+com.github.mq.producer.ProducerInit

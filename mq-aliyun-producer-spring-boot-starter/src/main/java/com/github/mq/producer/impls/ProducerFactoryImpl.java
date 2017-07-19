@@ -1,12 +1,12 @@
-package com.github.mq.producer.springboot.impls;
+package com.github.mq.producer.impls;
 
 import com.aliyun.openservices.ons.api.*;
-import com.github.mq.producer.springboot.ProducerAble;
-import com.github.mq.producer.springboot.ProducerFactory;
+import com.github.mq.producer.ProducerAble;
+import com.github.mq.producer.ProducerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.github.mq.core.scan.constant.MqConstant;
-import com.github.mq.producer.springboot.ProducerSerialize;
+import com.github.mq.producer.ProducerSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

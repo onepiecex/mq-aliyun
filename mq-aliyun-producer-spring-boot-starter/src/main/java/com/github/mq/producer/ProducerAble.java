@@ -1,4 +1,4 @@
-package com.github.mq.producer.springboot;
+package com.github.mq.producer;
 
 /**
  * Created by wangziqing on 16/3/3.
