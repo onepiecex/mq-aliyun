@@ -1,17 +1,14 @@
 package com.github.mq.consumer.models;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.github.mq.consumer.parms.ArgumentExtractor;
 import com.github.mq.consumer.parms.ArgumentExtractors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -41,27 +38,27 @@ public class ConsumerId {
         return sb.toString();
     }
 
-    private ArgumentExtractor[] getExtractor(Method method, Class<?>[] parmTypes) {
-        final Annotation[][] paramAnnotations = method
-                .getParameterAnnotations();
-
-        ArgumentExtractor[] extractors = new ArgumentExtractor[parmTypes.length];
-
-        for (int i = 0; i < parmTypes.length; i++) {
-            Class cls = parmTypes[i];
-            if (Optional.class.isAssignableFrom(cls)) {
-                throw new RuntimeException(String.format("%s : 不支持反序列化Optional类型", method));
-            }
-            extractors[i] = ArgumentExtractors.getArgumentExtractor(cls, paramAnnotations[i], beanFactory);
-        }
-        for(int i=0;i<extractors.length;i++){
-            if(extractors[i] == null){
-                extractors[i] = ArgumentExtractors.defaultExtractor;
-                break;
-            }
-        }
-        return extractors;
-    }
+//    private ArgumentExtractor[] getExtractor(Method method, Class<?>[] parmTypes) {
+//        final Annotation[][] paramAnnotations = method
+//                .getParameterAnnotations();
+//
+//        ArgumentExtractor[] extractors = new ArgumentExtractor[parmTypes.length];
+//
+//        for (int i = 0; i < parmTypes.length; i++) {
+//            Class cls = parmTypes[i];
+//            if (Optional.class.isAssignableFrom(cls)) {
+//                throw new RuntimeException(String.format("%s : 不支持反序列化Optional类型", method));
+//            }
+//            extractors[i] = ArgumentExtractors.getArgumentExtractor(cls, paramAnnotations[i], beanFactory);
+//        }
+//        for(int i=0;i<extractors.length;i++){
+//            if(extractors[i] == null){
+//                extractors[i] = ArgumentExtractors.defaultExtractor;
+//                break;
+//            }
+//        }
+//        return extractors;
+//    }
 
 
     public void addTag(String tag, Method method) {
@@ -88,7 +85,7 @@ public class ConsumerId {
             check.put(cls, methodAccess);
         }
         t.setMethodAccess(methodAccess);
-        t.setArgumentExtractors(getExtractor(method, method.getParameterTypes()));
+        t.setArgumentExtractors(ArgumentExtractors.getArgumentExtractor(method, method.getParameterTypes(), beanFactory));
         Stream.of(tag.split("\\|\\|")).forEach(tag_ -> tagMap.put(tag_.trim(), t));
     }
 

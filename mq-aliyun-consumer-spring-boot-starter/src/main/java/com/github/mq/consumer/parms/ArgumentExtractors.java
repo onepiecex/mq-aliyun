@@ -15,8 +15,10 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 /**
@@ -26,41 +28,79 @@ public class ArgumentExtractors {
 
     private static final Logger logger = LoggerFactory.getLogger(ArgumentExtractors.class);
 
-    public static  final ArgumentExtractor defaultExtractor;
+    public static final ArgumentExtractor defaultExtractor;
 
     static {
         Iterator<DefaultArgumentExtractor> producerServiceLoader = ServiceLoader.load(DefaultArgumentExtractor.class).iterator();
-        if(producerServiceLoader.hasNext()){
+        if (producerServiceLoader.hasNext()) {
             defaultExtractor = producerServiceLoader.next();
-        }else{
+        } else {
             defaultExtractor = new FastJsonExtractor();
         }
     }
-
 
     private static final Map<Class<?>, ArgumentExtractor<?>> STATIC_EXTRACTORS =
             ImmutableMap.<Class<?>, ArgumentExtractor<?>>builder()
                     .put(Message.class, new MessageExtractor())
                     .build();
 
-    public static ArgumentExtractor getArgumentExtractor(
-            Class<?> parameterClass,
-            Annotation[] annotations,
-            DefaultListableBeanFactory beanFactory) {
-        ArgumentExtractor<?> extractor = STATIC_EXTRACTORS.get(parameterClass);
-        if (extractor == null) {
-            for (Annotation annotation : annotations) {
-                WithArgumentExtractor withArgumentExtractor = annotation.annotationType()
-                        .getAnnotation(WithArgumentExtractor.class);
-                if (withArgumentExtractor != null) {
-                    extractor = instantiateComponent(beanFactory, withArgumentExtractor.value(), annotation);
-                    extractor.init(annotation, parameterClass);
-                    return extractor;
+    public static ArgumentExtractor[] getArgumentExtractor(Method method, Class<?>[] parmTypes, DefaultListableBeanFactory beanFactory) {
+        final Annotation[][] paramAnnotations = method
+                .getParameterAnnotations();
+
+        ArgumentExtractor[] extractors = new ArgumentExtractor[parmTypes.length];
+
+        int flag = 0;
+        for (int i = 0; i < parmTypes.length; i++) {
+            Class parameterClass = parmTypes[i];
+            if (Optional.class.isAssignableFrom(parameterClass)) {
+                throw new RuntimeException(String.format("%s : 不支持反序列化Optional类型", method));
+            }
+            ArgumentExtractor<?> extractor = STATIC_EXTRACTORS.get(parameterClass);
+            extractors[i] = extractor;
+
+            if (extractor == null) {
+                Annotation[] annotations = paramAnnotations[i];
+                for (Annotation annotation : annotations) {
+                    WithArgumentExtractor withArgumentExtractor = annotation.annotationType()
+                            .getAnnotation(WithArgumentExtractor.class);
+                    if (withArgumentExtractor != null) {
+                        extractor = instantiateComponent(beanFactory, withArgumentExtractor.value(), annotation);
+                        extractor.init(annotation, parameterClass);
+                        flag++;
+                        break;
+                    }
                 }
             }
+            if (extractor == null) {
+                extractor = defaultExtractor;
+                flag++;
+            }
+            if (flag == 1) {
+                extractors[i] = extractor;
+            }
         }
-        return extractor;
+        return extractors;
     }
+
+//    public static ArgumentExtractor getArgumentExtractor(
+//            Class<?> parameterClass,
+//            Annotation[] annotations,
+//            DefaultListableBeanFactory beanFactory) {
+//        ArgumentExtractor<?> extractor = STATIC_EXTRACTORS.get(parameterClass);
+//        if (extractor == null) {
+//            for (Annotation annotation : annotations) {
+//                WithArgumentExtractor withArgumentExtractor = annotation.annotationType()
+//                        .getAnnotation(WithArgumentExtractor.class);
+//                if (withArgumentExtractor != null) {
+//                    extractor = instantiateComponent(beanFactory, withArgumentExtractor.value(), annotation);
+//                    extractor.init(annotation, parameterClass);
+//                    return extractor;
+//                }
+//            }
+//        }
+//        return extractor;
+//    }
 
     public static <T> T instantiateComponent(DefaultListableBeanFactory beanFactory, Class<T> cls, Annotation annotation) {
         T extractor;
