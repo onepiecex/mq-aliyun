@@ -2,27 +2,24 @@ package com.github.mq.producer;
 
 import com.aliyun.openservices.ons.api.Producer;
 import com.aliyun.openservices.ons.api.SendCallback;
+import com.aliyun.openservices.ons.api.SendResult;
+import com.aliyun.openservices.ons.api.order.OrderProducer;
+import com.github.mq.producer.models.DeliveryOption;
 
 /**
  * Created by wangziqing on 17/7/17.
  */
 public interface ProducerFactory {
+    void sendAsync(final Enum address,final Object message);
+    void sendAsync(final Enum address,final Object message, final DeliveryOption deliveryOption);
+    void sendAsync(final Enum address,final Object message, final SendCallback sendCallback);
+    void sendAsync(final Enum address, final Object message, final DeliveryOption deliveryOption, final SendCallback sendCallback);
 
-    void send(ProducerAble producerAble, Object message);
+    SendResult orderSend(final Enum address, final Object message, final String shardingKey);
+    SendResult orderSend(final Enum address, final Object message, final String shardingKey,final DeliveryOption deliveryOption);
 
-    void send(ProducerAble producerAble, Object message, SendCallback sendCallback);
-
-    void send(ProducerAble producerAble, Object message, String key);
-
-    void send(ProducerAble producerAble, Object message, String key, SendCallback sendCallback);
-
-    void send(ProducerAble producerAble, Object message, Long deliverTime);
-
-    void send(ProducerAble producerAble, Object message, Long deliverTime, SendCallback sendCallback);
-
-    void send(ProducerAble producerAble, Object message, String key, Long deliverTime);
-
-    void send(ProducerAble producerAble, Object message, String key, Long deliverTime, SendCallback sendCallback);
-
-    Producer get(String pid);
+    Producer getProducer(String pid);
+    OrderProducer getOrderProducer(String pid);
+    void addProducer(String pid);
+    void addOrdereProducer(String pid);
 }

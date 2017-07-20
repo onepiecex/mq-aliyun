@@ -63,6 +63,7 @@ public class ConsumerRun extends Thread {
         if (consumerId.isOrdered()) {
             properties.put(PropertyKeyConst.SuspendTimeMillis, consumerOptional.getSuspendTime());
             OrderConsumer orderConsumer = ONSFactory.createOrderedConsumer(properties);
+
             orderConsumer.subscribe(topic,tags,((message, context) ->
                     dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.CommitMessage)?
                             OrderAction.Success : OrderAction.Suspend

@@ -88,13 +88,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.beans.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>eu.infomas</groupId>
                 <artifactId>annotation-detector</artifactId>
                 <version>${annotation.detector.version}</version>
