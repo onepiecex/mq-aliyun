@@ -1,20 +1,21 @@
 package com.github.mq.consumer.impls;
 
-import com.github.mq.core.scan.ClassScanner;
-import com.github.mq.core.scan.constant.MqConstant;
-import com.google.common.base.Strings;
-import com.github.mq.consumer.ConsumerBuild;
 import com.github.mq.consumer.ConsumerAble;
+import com.github.mq.consumer.ConsumerBuild;
 import com.github.mq.consumer.Ons;
 import com.github.mq.consumer.models.ConsumerId;
 import com.github.mq.consumer.models.ConsumerOptional;
 import com.github.mq.consumer.models.Tag;
 import com.github.mq.consumer.parms.ArgumentExtractors;
+import com.github.mq.core.scan.constant.MqConstant;
+import com.google.common.base.Strings;
+import org.reflections.Reflections;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.Environment;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by wangziqing on 17/7/13.
@@ -25,7 +26,9 @@ public class OnsImpl implements Ons {
     public static final String MQ_CONSUMER_DEFAULT_MAX_RECONSUME = "aliyun.mq.consumer.defaultMaxReconsume";
     public static final String MQ_CONSUMER_DEFAULT_SUSPEND_TIME = "aliyun.mq.consumer.suspendTime";
 
-    //SuspendTimeMillis
+    public static final String MQ_CONSUMER_PACKAGES = "aliyun.mq.consumer.packages";
+
+    public static String[] packages;
 
     private static int defaultConsumerThread = 20;
     private static String defaultConsumerModel = ConsumerAble.CLUSTERING;
@@ -46,10 +49,12 @@ public class OnsImpl implements Ons {
     }
 
     public void start() {
-        ClassScanner.scan(ConsumerAble.class).forEach((Class<ConsumerAble> mqConsumerClass) -> {
-            ConsumerAble consumer = ArgumentExtractors.instantiateComponent(beanFactory,mqConsumerClass,null);
+        Reflections reflections = new Reflections(packages);
+        Set<Class<? extends ConsumerAble>> subTypes = reflections.getSubTypesOf(ConsumerAble.class);
+        for(Class<? extends ConsumerAble> consumerAble : subTypes){
+            ConsumerAble consumer = ArgumentExtractors.instantiateComponent(beanFactory,consumerAble,null);
             consumer.init(this);
-        });
+        }
         consumerMap.forEach((cid, consumerId) -> {
             Map<String, Tag> tagMap = consumerId.getTagMap();
             for (Map.Entry<String, Tag> tagEntry : tagMap.entrySet()) {
@@ -62,8 +67,18 @@ public class OnsImpl implements Ons {
         });
     }
 
+
     private void init() {
         Environment env = beanFactory.getBean(Environment.class);
+
+        String package_ = env.getProperty(MQ_CONSUMER_PACKAGES);
+
+        if(null == package_){
+            throw new RuntimeException(String.format("mq 启动失败, %s is require", MQ_CONSUMER_PACKAGES));
+        }
+
+        packages = package_.split(",");
+
 
         accessKey = env.getProperty(MqConstant.ACCESS_KEY);
         if (null == accessKey || accessKey.trim().isEmpty()) {

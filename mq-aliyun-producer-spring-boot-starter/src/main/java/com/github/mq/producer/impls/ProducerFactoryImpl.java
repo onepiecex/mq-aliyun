@@ -13,7 +13,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
@@ -29,6 +28,7 @@ public class ProducerFactoryImpl implements ProducerFactory {
     private final static Logger logger = LoggerFactory.getLogger(ProducerFactoryImpl.class);
 
     public static final String MQ_PRODUCER_SEND_MSG_TIMEOUT = "aliyun.mq.producer.sendTimeOut";
+    public static final String MQ_PRODUCER_PACKAGES = "aliyun.mq.producer.packages";
     private static volatile Map<String, Producer> producerMap = Maps.newConcurrentMap();
     private static volatile Map<String, OrderProducer> orderProducerMap = Maps.newConcurrentMap();
 
@@ -37,8 +37,8 @@ public class ProducerFactoryImpl implements ProducerFactory {
     private String secretKey;
     private String sendTimeOut = "3000";
 
-    @Autowired
-    private Environment env;
+    private String[] packages;
+
 
     private static final ProducerSerialize producerSerialize;
 
@@ -142,7 +142,13 @@ public class ProducerFactoryImpl implements ProducerFactory {
         return new MessageBuild(pid.value(),msg);
     }
 
-    public void init() {
+    public void init(Environment env) {
+        String package_ = env.getProperty(MQ_PRODUCER_PACKAGES);
+        if(null == package_){
+            throw new RuntimeException(String.format("mq 启动失败, %s is require", MQ_PRODUCER_PACKAGES));
+        }
+        packages = package_.split(",");
+
         accessKey = env.getProperty(MqConstant.ACCESS_KEY);
         if (null == accessKey || accessKey.trim().isEmpty()) {
             throw new RuntimeException(String.format("mq 启动失败, %s is require", MqConstant.ACCESS_KEY));
@@ -183,6 +189,9 @@ public class ProducerFactoryImpl implements ProducerFactory {
         return orderProducerMap.get(pid);
     }
 
+    public String[] packages(){
+        return packages;
+    }
     private void addProducer(String pid, boolean ordered) {
         if (ordered) {
             if (null != orderProducerMap.get(pid)) {

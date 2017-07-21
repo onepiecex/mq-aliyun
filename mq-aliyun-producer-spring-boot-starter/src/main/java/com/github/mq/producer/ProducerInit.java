@@ -1,44 +1,45 @@
 package com.github.mq.producer;
 
-import com.github.mq.core.scan.AnnotationClassScanner;
 import com.github.mq.producer.impls.ProducerFactoryImpl;
 import com.github.mq.producer.models.Pid;
 import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.reflections.Reflections;
+import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 
 import java.util.Set;
 
 /**
  * Created by wangziqing on 17/7/17.
  */
-@Configuration
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class ProducerInit {
 
-    private final static Logger logger = LoggerFactory.getLogger(ProducerInit.class);
-
     @Bean
-    public ProducerFactory getProducer(DefaultListableBeanFactory beanFactory) {
+    @ConditionalOnMissingBean
+    public ProducerFactory getProducer(AbstractAutowireCapableBeanFactory beanFactory) {
         ProducerFactoryImpl producerFactory = new ProducerFactoryImpl();
-        beanFactory.autowireBean(producerFactory);
-        producerFactory.init();
+        producerFactory.init(beanFactory.getBean(Environment.class));
         start(producerFactory);
         return producerFactory;
     }
 
     private void start(ProducerFactoryImpl producer) {
-        PidMode pidMode = getPids();
+        Reflections reflections = new Reflections(producer.packages());
+        PidMode pidMode = getPids(reflections.getTypesAnnotatedWith(Pid.class));
         pidMode.getPids().forEach(pid -> new Thread(() -> producer.addProducer(pid)).start());
         pidMode.getOrderPids().forEach(pid -> new Thread(() -> producer.addOrdereProducer(pid)).start());
     }
 
-    private PidMode getPids() {
+
+    public static PidMode getPids( Set<Class<?>> classes) {
         Set<String> pids = Sets.newHashSet();
         Set<String> orderPids = Sets.newHashSet();
-        Set<Class<?>> classes = AnnotationClassScanner.scan(Pid.class);
+
         for (Class<?> cls : classes) {
             Object[] enumConstants = cls.getEnumConstants();
             if (null != enumConstants) {
@@ -53,7 +54,7 @@ public class ProducerInit {
         return new PidMode(pids, orderPids);
     }
 
-    private class PidMode {
+    public static class PidMode {
         private Set<String> pids;
         private Set<String> orderPids;
 

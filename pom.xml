@@ -58,6 +58,8 @@
         <commons.io.version>2.4</commons.io.version>
         <reflectasm.version>1.09</reflectasm.version>
         <spring.beans.version>4.3.8.RELEASE</spring.beans.version>
+
+        <reflections.version>0.9.11</reflections.version>
     </properties>
 
     <distributionManagement>
@@ -88,15 +90,15 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>eu.infomas</groupId>
-                <artifactId>annotation-detector</artifactId>
-                <version>${annotation.detector.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
             </dependency>
 
             <dependency>
@@ -109,14 +111,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
                 <version>${spring.boot.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
-                <scope>provided</scope>
+                <!--<scope>provided</scope>-->
             </dependency>
 
             <dependency>

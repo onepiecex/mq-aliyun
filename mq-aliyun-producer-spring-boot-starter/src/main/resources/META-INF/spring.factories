@@ -1,2 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.github.mq.producer.ProducerInit
+
+#org.springframework.context.ApplicationListener=\
+#com.github.mq.producer.ReadyEvent
