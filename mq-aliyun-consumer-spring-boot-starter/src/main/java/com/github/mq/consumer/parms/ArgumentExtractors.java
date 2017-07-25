@@ -42,6 +42,7 @@ public class ArgumentExtractors {
     private static final Map<Class<?>, ArgumentExtractor<?>> STATIC_EXTRACTORS =
             ImmutableMap.<Class<?>, ArgumentExtractor<?>>builder()
                     .put(Message.class, new MessageExtractor())
+                    .put(com.github.mq.consumer.models.Message.class, new MessageExtractor())
                     .build();
 
     public static ArgumentExtractor[] getArgumentExtractor(Method method, Class<?>[] parmTypes, DefaultListableBeanFactory beanFactory) {

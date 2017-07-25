@@ -77,7 +77,7 @@ public class ConsumerRun extends Thread {
             );
             consumer.start();
        }
-        logger.info("消费者启动成功 -->  : CID: {}({}) , 消费模式: {} , 消费线程数: {} , 最大重试次数: {} {} , 订阅 TOPIC: {} TAG: {}",
+        logger.info("消费者启动成功: {}({}) , 消费模式: {} , 消费线程数: {} , 最大重试次数: {} {} , 订阅 TOPIC: {} TAG: {}",
                 cid, consumerId.isOrdered()?"有序":"无序",
                 consumerOptional.getConsumerModel(), consumerOptional.getConsumeThread(), consumerOptional.getMaxReconsume(),
                 consumerId.isOrdered()?", 重试前的等待时间:"+consumerOptional.getSuspendTime()+"毫秒":"",topic,tags);

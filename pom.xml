@@ -11,6 +11,7 @@
         <module>mq-aliyun-core</module>
         <module>mq-aliyun-consumer-spring-boot-starter</module>
         <module>mq-aliyun-producer-spring-boot-starter</module>
+        <module>mq-aliyun-example</module>
     </modules>
 
 
@@ -125,12 +126,12 @@
                 <groupId>com.esotericsoftware.reflectasm</groupId>
                 <artifactId>reflectasm</artifactId>
                 <version>${reflectasm.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                </exclusions>
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.ow2.asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
             </dependency>
 
             <dependency>
