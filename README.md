@@ -84,13 +84,12 @@ public class TestConsumer {
 ## 自定义序列化方式
 
 
-***默认使用 fastJson 进行序列化和反序列化***
+`默认使用 fastJson 进行序列化和反序列化`
 
 
 ### 这里我拿 jackJson 序列化 和 反序列化举例子
+
 #### 自定义发送消息的序列方式
-
-
 ```
 - resources
   - META-INF
