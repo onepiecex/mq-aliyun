@@ -1,5 +1,24 @@
 # mq-aliyun
 
+
+## 使用
+生产者
+```xml
+<dependency>
+  <groupId>com.github.onepiecex</groupId>
+  <artifactId>mq-aliyun-producer-spring-boot-starter</artifactId>
+  <version>1.0</version>
+</dependency>
+```
+消费者
+```xml
+<dependency>
+  <groupId>com.github.onepiecex</groupId>
+  <artifactId>mq-aliyun-consumer-spring-boot-starter</artifactId>
+  <version>1.0</version>
+</dependency>
+```
+
 ## 生产者
 
 ### 定义发送地址
@@ -92,7 +111,7 @@ aliyun :
     suffix : _dev
 
     producer :
-      #发送超时时间(毫秒)
+      #发送超时时间(毫秒)  缺省3000
       sendTimeOut : 1000
 
       #生产者路径,支持多个 以,分割
