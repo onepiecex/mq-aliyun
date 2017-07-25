@@ -39,38 +39,7 @@ producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {
 });
 ```
 
-### 自定义发送消息的序列方式
 
-`默认使用fastJson 序列化`
-
-```
-- resources
-  - META-INF
-    - services
-      - com.github.mq.producer.ProducerSerialize
-      
-在 com.github.mq.producer.ProducerSerialize 里 指定你的实现类
-```
-
-```java
-public class MyProducerSerialize implements ProducerSerialize {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    @Override
-    public byte[] objToBytes(Object object) {
-        //do some thine
-        try {
-            return mapper.writeValueAsBytes(object);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-
-            throw new RuntimeException("序列化失败");
-        }
-
-    }
-}
-```
 
 
 ## 消费者定义
@@ -110,3 +79,87 @@ public class TestConsumer {
 }
 
 ```
+
+
+## 自定义序列化方式
+
+
+***默认使用 fastJson 进行序列化和反序列化***
+
+
+### 这里我拿 jackJson 序列化 和 反序列化举例子
+#### 自定义发送消息的序列方式
+
+
+```
+- resources
+  - META-INF
+    - services
+      - com.github.mq.producer.ProducerSerialize
+      
+在 com.github.mq.producer.ProducerSerialize 里 指定你的实现类
+```
+
+```java
+public class MyProducerSerialize implements ProducerSerialize {
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    @Override
+    public byte[] objToBytes(Object object) {
+        //do some thine
+        try {
+            return mapper.writeValueAsBytes(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+
+            throw new RuntimeException("序列化失败");
+        }
+
+    }
+}
+```
+
+#### 自定义反序列化方式
+
+首先定义一个PARAMETER注解
+```java
+@WithArgumentExtractor(JackArgumentExtractor.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.PARAMETER})
+public @interface JackJson {
+}
+```
+定义反序列化实现类
+```java
+public class JackArgumentExtractor implements ArgumentExtractor {
+
+    private Class parameterClass;
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    @Override
+    public void init(Annotation annotation, Class parameterClass) {
+        this.parameterClass = parameterClass;
+    }
+
+    @Override
+    public Result extract(Message message) {
+        byte[] body = message.getBody();
+        try {
+            return Results.next( mapper.readValue(body,parameterClass));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Results.end(Action.CommitMessage);
+    }
+}
+```
+使用
+```java
+public Action jackjson(@JackJson Dish dish){
+    //do some thine
+    return Action.CommitMessage;
+}
+```
+
