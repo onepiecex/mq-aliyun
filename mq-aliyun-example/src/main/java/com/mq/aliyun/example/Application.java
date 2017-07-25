@@ -27,6 +27,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+//        producerFactory.orderSend(TestProducer.DISH_ADD, new Dish(1L, "name"),"key");
         producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish(1L, "name"));
 
         producerFactory.sendAsync(TestProducer.DISH_UPDATE,
@@ -36,12 +37,14 @@ public class Application implements CommandLineRunner {
         producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {
             @Override
             public void onSuccess(SendResult sendResult) {
+                System.out.println(sendResult);
                 //send success
                 //do some thing...
             }
 
             @Override
             public void onException(OnExceptionContext context) {
+                System.out.println(context);
                 //send fail
                 //do some thing...
             }

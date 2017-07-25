@@ -7,6 +7,7 @@ import com.github.mq.core.scan.constant.MqConstant;
 import com.github.mq.producer.ProducerFactory;
 import com.github.mq.producer.ProducerSerialize;
 import com.github.mq.producer.models.DeliveryOption;
+import com.github.mq.producer.models.PendingMsg;
 import com.github.mq.producer.models.Pid;
 import com.github.mq.producer.models.To;
 import com.google.common.base.Strings;
@@ -16,10 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ServiceLoader;
+import java.util.*;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by wangziqing on 17/7/19.
@@ -31,6 +31,9 @@ public class ProducerFactoryImpl implements ProducerFactory {
     public static final String MQ_PRODUCER_PACKAGES = "aliyun.mq.producer.packages";
     private static volatile Map<String, Producer> producerMap = Maps.newConcurrentMap();
     private static volatile Map<String, OrderProducer> orderProducerMap = Maps.newConcurrentMap();
+
+    private static volatile Map<String, Boolean> checkStart = Maps.newConcurrentMap();
+    private static volatile Map<String, List<PendingMsg>> pendding = Maps.newConcurrentMap();
 
     private String suffix;
     private String accessKey;
@@ -53,51 +56,77 @@ public class ProducerFactoryImpl implements ProducerFactory {
 
     @Override
     public void sendAsync(final Enum address, final Object message) {
-        sendAsync(address, message, null,null);
+        sendAsync(address, message, null, null);
     }
+
     @Override
-    public void sendAsync(final Enum address,final Object message, final DeliveryOption deliveryOption) {
-        sendAsync(address,message,deliveryOption,null);
+    public void sendAsync(final Enum address, final Object message, final DeliveryOption deliveryOption) {
+        sendAsync(address, message, deliveryOption, null);
 
     }
+
     @Override
-    public void sendAsync(final Enum address,final Object message, final SendCallback sendCallback) {
+    public void sendAsync(final Enum address, final Object message, final SendCallback sendCallback) {
         sendAsync(address, message, null, sendCallback);
     }
+
     @Override
     public void sendAsync(final Enum address, final Object message, final DeliveryOption deliveryOption, final SendCallback sendCallback) {
         MessageBuild messageBuild = buildMessage(address, message, deliveryOption);
-        Producer producer = getProducer(messageBuild.getPid());
-        if(null == producer){
-            throw new RuntimeException(String.format("无效的pid: %s", messageBuild.getPid()));
+        final String pid = messageBuild.getPid();
+        Producer producer = getProducer(pid);
+        if (null == producer) {
+            Boolean isStart = checkStart.get(pid);
+            if (null != isStart && !isStart) {
+                List<PendingMsg> messages = pendding.get(pid);
+                if (null == messages) {
+                    messages = new ArrayList<>();
+                }
+                messages.add(new PendingMsg(address, message, deliveryOption, sendCallback));
+                pendding.put(pid,messages);
+                return;
+            } else {
+                throw new RuntimeException(String.format("发送失败, 无效的pid: %s, address: %s", messageBuild.getPid(),address.name()));
+            }
         }
         if (!producer.isStarted()) {
             producer.start();
         }
         if (null != sendCallback) {
             producer.sendAsync(messageBuild.getMessage(), sendCallback);
-        }else{
+        } else {
             producer.sendOneway(messageBuild.getMessage());
         }
     }
 
     @Override
-    public SendResult orderSend(final Enum address, final Object message, final String shardingKey){
-        return orderSend(address,message,shardingKey,null);
+    public SendResult orderSend(final Enum address, final Object message, final String shardingKey) {
+        return orderSend(address, message, shardingKey, null);
     }
+
     @Override
-    public SendResult orderSend(final Enum address, final Object message, final String shardingKey,final DeliveryOption deliveryOption){
+    public SendResult orderSend(final Enum address, final Object message, final String shardingKey, final DeliveryOption deliveryOption) {
 
         MessageBuild messageBuild = buildMessage(address, message, deliveryOption);
-
-        OrderProducer orderProducer =  getOrderProducer(messageBuild.getPid());
-        if(null == orderProducer){
-            throw new RuntimeException(String.format("无效的pid: %s", messageBuild.getPid()));
+        String pid = messageBuild.getPid();
+        OrderProducer orderProducer = getOrderProducer(pid);
+        if (null == orderProducer) {
+            Boolean isStart = checkStart.get(pid);
+            if (null != isStart && !isStart) {
+                try {
+                    sleep(1500);
+                    return this.orderSend(address,message,shardingKey,deliveryOption);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                throw new RuntimeException(String.format("顺序消息发送失败, 无效的pid: %s, address: %s", messageBuild.getPid(),address.name()));
+            }
         }
-        if(!orderProducer.isStarted()){
+        if (!orderProducer.isStarted()) {
             orderProducer.start();
         }
-        return orderProducer.send(messageBuild.getMessage(),shardingKey);
+        return orderProducer.send(messageBuild.getMessage(), shardingKey);
     }
 
 
@@ -105,7 +134,7 @@ public class ProducerFactoryImpl implements ProducerFactory {
         Class<?> addressCls = address.getClass();
 
         Pid pid = addressCls.getAnnotation(Pid.class);
-        if(null == pid){
+        if (null == pid) {
             throw new RuntimeException(String.format("无效的address %s not found @Pid", addressCls));
         }
 
@@ -115,8 +144,8 @@ public class ProducerFactoryImpl implements ProducerFactory {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        if(null == to){
-            throw new RuntimeException(String.format("无效的address %s.%s not found @To", addressCls,address.name()));
+        if (null == to) {
+            throw new RuntimeException(String.format("无效的address %s.%s not found @To", addressCls, address.name()));
         }
 
         Message msg = new Message(
@@ -139,12 +168,12 @@ public class ProducerFactoryImpl implements ProducerFactory {
             if (null != deliverTime && 0 != deliverTime)
                 msg.setStartDeliverTime(deliverTime);
         }
-        return new MessageBuild(pid.value(),msg);
+        return new MessageBuild(pid.value(), msg);
     }
 
     public void init(Environment env) {
         String package_ = env.getProperty(MQ_PRODUCER_PACKAGES);
-        if(null == package_){
+        if (null == package_) {
             throw new RuntimeException(String.format("mq 启动失败, %s is require", MQ_PRODUCER_PACKAGES));
         }
         packages = package_.split(",");
@@ -189,9 +218,10 @@ public class ProducerFactoryImpl implements ProducerFactory {
         return orderProducerMap.get(pid);
     }
 
-    public String[] packages(){
+    public String[] packages() {
         return packages;
     }
+
     private void addProducer(String pid, boolean ordered) {
         if (ordered) {
             if (null != orderProducerMap.get(pid)) {
@@ -204,9 +234,10 @@ public class ProducerFactoryImpl implements ProducerFactory {
                 return;
             }
         }
+        checkStart.put(pid, false);
         String pidsuffix = pid + suffix;
 
-        logger.info("发现生产者: {}({})", pidsuffix,ordered ? "有序" : "无序");
+        logger.info("发现生产者: {}({})", pidsuffix, ordered ? "有序" : "无序");
 
         Properties properties = new Properties();
         // AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
@@ -218,26 +249,39 @@ public class ProducerFactoryImpl implements ProducerFactory {
         //设置发送超时时间，单位毫秒
         properties.setProperty(PropertyKeyConst.SendMsgTimeoutMillis, sendTimeOut);
 
+
         if (ordered) {
             OrderProducer orderProducer = ONSFactory.createOrderProducer(properties);
             orderProducerMap.put(pid, orderProducer);
+            checkStart.put(pid, true);
             orderProducer.start();
         } else {
             Producer producer = ONSFactory.createProducer(properties);
             producerMap.put(pid, producer);
+            checkStart.put(pid, true);
             producer.start();
+
+            List<PendingMsg> pendingMsgs = pendding.get(pid);
+            if (null != pendingMsgs) {
+                for (PendingMsg msg : pendingMsgs) {
+                    sendAsync(msg.getAnEnum(), msg.getMessage(), msg.getDeliveryOption(), msg.getSendCallback());
+                }
+            }
+            pendding.remove(pid);
         }
 
         logger.info("生产者启动成功: {}({})  发送超时时间: {}毫秒", pidsuffix, ordered ? "有序" : "无序", sendTimeOut);
     }
 
-    private static class MessageBuild{
+    private static class MessageBuild {
         private String pid;
         private Message message;
-        public MessageBuild(String pid,Message message){
+
+        public MessageBuild(String pid, Message message) {
             this.pid = pid;
             this.message = message;
         }
+
         public String getPid() {
             return pid;
         }

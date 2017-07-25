@@ -1,8 +1,8 @@
 aliyun :
   #阿里云授权KEY
-  accessKey : XXXXXXX
+  accessKey : XXXX
   #阿里云秘钥
-  secretKey : XXXXXXXXXX
+  secretKey : XXXX
 
   mq :
     #topic、cid、pid的后缀 (用于区分 开发 生产模式)

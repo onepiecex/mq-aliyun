@@ -200,7 +200,7 @@ public Action jackjson(@JackJson Dish dish){
 ```
 
 也可以实现 DefaultArgumentExtractor, 替换默认的反序列化方式
-```java
+```
 - resources
   - META-INF
     - services
