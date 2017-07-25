@@ -88,8 +88,11 @@ public class Consumers implements ConsumerAble {
 ```
 
 ```java
+//该类下面的所有消费者消费失败时重试5次
 @Reconsume(5)
 public class TestConsumer {
+    
+    //重试3次
     @Reconsume(3)
     public Action dishAdd(Dish dish){
         //do some thine
