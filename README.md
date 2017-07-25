@@ -77,6 +77,43 @@ public class TestConsumer {
         return Action.CommitMessage;
     }
 }
+```
+
+## 配置文件 (application.yaml)
+```yaml
+aliyun :
+  #阿里云授权KEY
+  accessKey : XXXXXXX
+  #阿里云秘钥
+  secretKey : XXXXXXXXXX
+
+  mq :
+    #topic、cid、pid的后缀 (用于区分 开发 生产模式)
+    suffix : _dev
+
+    producer :
+      #发送超时时间(毫秒)
+      sendTimeOut : 1000
+
+      #生产者路径,支持多个 以,分割
+      packages : com.mq.aliyun.example
+
+    consumer :
+      #扫描实现了ConsumerAble的类的路径,支持多个 以,分割
+      packages : com.mq.aliyun.example
+
+      #默认消费线程数 , 缺省20
+      defaultThread : 10
+
+      #集群模式: CLUSTERING ,广播模式: BROADCASTING
+      defaultModel : CLUSTERING
+
+      #默认重试次数, 缺省16次
+      defaultMaxReconsume : 5
+
+      #顺序消息消费失败进行重试前的等待时间 单位(毫秒) , 默认100
+      #仅顺序消息才会生效
+      suspendTime : 200
 
 ```
 
@@ -161,4 +198,19 @@ public Action jackjson(@JackJson Dish dish){
     return Action.CommitMessage;
 }
 ```
+
+也可以实现 DefaultArgumentExtractor, 替换默认的反序列化方式
+```java
+- resources
+  - META-INF
+    - services
+      - com.github.mq.consumer.DefaultArgumentExtractor
+```
+
+```java
+public Action jackjson(Dish dish){
+    //do some thine
+    return Action.CommitMessage;
+}
+
 
