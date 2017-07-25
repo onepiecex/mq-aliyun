@@ -239,5 +239,10 @@ public Action jackjson(Dish dish){
     //do some thine
     return Action.CommitMessage;
 }
+```
 
+## License
 
+Copyright (C) 2017 onepiece.x, Inc.
+
+This work is licensed under the Apache License, Version 2.0. See LICENSE for details.
