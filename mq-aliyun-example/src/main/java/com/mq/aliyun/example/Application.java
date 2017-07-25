@@ -6,6 +6,7 @@ import com.aliyun.openservices.ons.api.SendResult;
 import com.github.mq.producer.ProducerFactory;
 import com.github.mq.producer.models.DeliveryOption;
 import com.mq.aliyun.example.model.Dish;
+import com.mq.aliyun.example.producers.OrderProducer;
 import com.mq.aliyun.example.producers.TestProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -49,6 +50,8 @@ public class Application implements CommandLineRunner {
                 //do some thing...
             }
         });
+
+        producerFactory.orderSend(OrderProducer.SEND_MAIL,"message","shardingKey");
     }
 
 

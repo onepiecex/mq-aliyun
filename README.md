@@ -1,5 +1,5 @@
 # mq-aliyun
-
+***基于[阿里云MQ](https://help.aliyun.com/document_detail/29532.html?spm=5176.doc55448.6.539.oDO0oJ)的封装***
 
 ## 使用
 生产者
@@ -35,6 +35,11 @@ public enum  TestProducer {
     DISH_DEL
 }
 ```
+定义顺序生产者
+```java
+@Pid(value = "PID_MEICANYUN" ,ordered = true)
+```
+
 ### 消息发送
 ```java
 producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish(1L, "name"));
@@ -57,7 +62,10 @@ producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {
     }
 });
 ```
-
+`发送顺序消息时 必须使用orderSend发送`
+```java
+producerFactory.orderSend(......);
+```
 
 
 

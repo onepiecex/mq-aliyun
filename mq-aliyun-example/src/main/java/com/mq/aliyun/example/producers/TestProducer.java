@@ -6,14 +6,14 @@ import com.github.mq.producer.models.To;
 /**
  * Created by wangziqing on 17/7/25.
  */
-@Pid(value = "PID_MEICANYUN")
+@Pid(value = "PID_TEST" ,ordered = true)
 public enum  TestProducer {
-    @To(topic = "MEICANYUN", tag = "dish.add")
+    @To(topic = "TEST", tag = "dish.add")
     DISH_ADD,
 
-    @To(topic = "MEICANYUN", tag = "dish.update")
+    @To(topic = "TEST", tag = "dish.update")
     DISH_UPDATE,
 
-    @To(topic = "MEICANYUN", tag = "dish.del")
+    @To(topic = "TEST", tag = "dish.del")
     DISH_DEL
 }
