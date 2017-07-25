@@ -43,22 +43,13 @@ producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {
 
 `默认使用fastJson 序列化`
 
-
-# resources
 ```
+- resources
+  - META-INF
+    - services
+      - com.github.mq.producer.ProducerSerialize
+      
 在 com.github.mq.producer.ProducerSerialize 里 指定你的实现类
-
-resources
-	|-->  META-INF // 外卖
-		|--> services
-		    |--> com.github.mq.producer.ProducerSerialize
-		
--- resources
-  -- META-INF
-    -- services
-      -- com.github.mq.producer.ProducerSerialize
-
-
 ```
 
 ```java
