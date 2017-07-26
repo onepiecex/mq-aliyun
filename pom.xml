@@ -11,7 +11,7 @@
         <module>mq-aliyun-core</module>
         <module>mq-aliyun-consumer-spring-boot-starter</module>
         <module>mq-aliyun-producer-spring-boot-starter</module>
-        <module>mq-aliyun-example</module>
+        <!--<module>mq-aliyun-example</module>-->
     </modules>
 
 
