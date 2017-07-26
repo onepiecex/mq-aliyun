@@ -68,6 +68,7 @@ SendResult sendResult = producerFactory.orderSend(......);
 ```
 
 `sendAsync` 发送无序消息
+
 `orderSend` 发送[顺序消息](https://help.aliyun.com/document_detail/49319.html?spm=5176.doc29532.6.565.PAkJSD)
 
 ## 消费者定义
