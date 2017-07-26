@@ -42,14 +42,14 @@ public enum  TestProducer {
 
 ### 消息发送
 
-`sendAsync` 发送无序消息
-
-`orderSend` 发送[顺序消息](https://help.aliyun.com/document_detail/49319.html?spm=5176.doc29532.6.565.PAkJSD)
-
 ```java
 @Autowired
 private ProducerFactory producerFactory;
 ```
+
+`sendAsync` 发送无序消息
+
+`orderSend` 发送[顺序消息](https://help.aliyun.com/document_detail/49319.html?spm=5176.doc29532.6.565.PAkJSD)
 
 ```java
 producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish(1L, "name"));
