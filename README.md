@@ -169,7 +169,7 @@ aliyun :
 
 `这里我拿 jackJson 序列化 和 反序列化举例子`
 
-#### 自定义发送消息的序列化方式
+### 自定义发送消息的序列化方式
 ```
 - resources
   - META-INF
@@ -199,7 +199,7 @@ public class MyProducerSerialize implements ProducerSerialize {
 }
 ```
 
-#### 自定义反序列化方式
+### 自定义反序列化方式
 
 首先定义一个PARAMETER注解
 ```java
