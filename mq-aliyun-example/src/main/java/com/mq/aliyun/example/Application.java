@@ -28,11 +28,12 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        producerFactory.orderSend(TestProducer.DISH_ADD, new Dish(1L, "name"),"key");
-        producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish(1L, "name"));
+        producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish());
 
-        producerFactory.sendAsync(TestProducer.DISH_UPDATE,
-                new Dish(2L, "name"),
+        Dish dish = new Dish();
+        dish.setId(2L);
+        dish.setName("www");
+        producerFactory.sendAsync(TestProducer.DISH_UPDATE, dish,
                 new DeliveryOption("key").setDeliverTime(System.currentTimeMillis() + 1000 * 60));
 
         producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {

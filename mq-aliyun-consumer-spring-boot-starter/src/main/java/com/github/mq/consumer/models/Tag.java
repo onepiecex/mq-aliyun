@@ -1,7 +1,7 @@
 package com.github.mq.consumer.models;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.github.mq.consumer.parms.ArgumentExtractor;
+import com.github.mq.consumer.parms.ArgumentExtractorWrapper;
 
 /**
  * Created by wangziqing on 17/7/13.
@@ -13,7 +13,7 @@ public class Tag {
     private String methodName;
     private Integer reconsume;
 
-    private ArgumentExtractor[] argumentExtractors;
+    private ArgumentExtractorWrapper[] argumentExtractors;
 
     public Object invoke(Object[] parms){
         return methodAccess.invoke(invokeObject,methodName,parms);
@@ -59,11 +59,11 @@ public class Tag {
         this.reconsume = reconsume;
     }
 
-    public ArgumentExtractor[] getArgumentExtractors() {
+    public ArgumentExtractorWrapper[] getArgumentExtractors() {
         return argumentExtractors;
     }
 
-    public void setArgumentExtractors(ArgumentExtractor[] argumentExtractors) {
+    public void setArgumentExtractors(ArgumentExtractorWrapper[] argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
 }

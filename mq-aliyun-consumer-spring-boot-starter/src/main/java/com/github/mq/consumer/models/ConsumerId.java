@@ -38,29 +38,6 @@ public class ConsumerId {
         return sb.toString();
     }
 
-//    private ArgumentExtractor[] getExtractor(Method method, Class<?>[] parmTypes) {
-//        final Annotation[][] paramAnnotations = method
-//                .getParameterAnnotations();
-//
-//        ArgumentExtractor[] extractors = new ArgumentExtractor[parmTypes.length];
-//
-//        for (int i = 0; i < parmTypes.length; i++) {
-//            Class cls = parmTypes[i];
-//            if (Optional.class.isAssignableFrom(cls)) {
-//                throw new RuntimeException(String.format("%s : 不支持反序列化Optional类型", method));
-//            }
-//            extractors[i] = ArgumentExtractors.getArgumentExtractor(cls, paramAnnotations[i], beanFactory);
-//        }
-//        for(int i=0;i<extractors.length;i++){
-//            if(extractors[i] == null){
-//                extractors[i] = ArgumentExtractors.defaultExtractor;
-//                break;
-//            }
-//        }
-//        return extractors;
-//    }
-
-
     public void addTag(String tag, Method method) {
         if (tagMap.containsKey(tag)) {
             logger.warn(String.format("cid: %s, 存在相同的tag : %s", cid, tag));

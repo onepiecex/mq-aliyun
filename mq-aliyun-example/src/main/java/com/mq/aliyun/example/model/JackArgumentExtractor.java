@@ -15,17 +15,10 @@ import java.lang.annotation.Annotation;
  */
 public class JackArgumentExtractor implements ArgumentExtractor {
 
-    private Class parameterClass;
-
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void init(Annotation annotation, Class parameterClass) {
-        this.parameterClass = parameterClass;
-    }
-
-    @Override
-    public Result extract(Message message) {
+    public Result extract(Message message, Class parameterClass, Annotation annotation) {
         byte[] body = message.getBody();
         try {
             return Results.next( mapper.readValue(body,parameterClass));

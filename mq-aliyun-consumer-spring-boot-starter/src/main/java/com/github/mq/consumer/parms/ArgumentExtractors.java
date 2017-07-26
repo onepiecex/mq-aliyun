@@ -28,7 +28,7 @@ public class ArgumentExtractors {
 
     private static final Logger logger = LoggerFactory.getLogger(ArgumentExtractors.class);
 
-    public static final ArgumentExtractor defaultExtractor;
+    public static ArgumentExtractor defaultExtractor;
 
     static {
         Iterator<DefaultArgumentExtractor> producerServiceLoader = ServiceLoader.load(DefaultArgumentExtractor.class).iterator();
@@ -45,11 +45,11 @@ public class ArgumentExtractors {
                     .put(com.github.mq.consumer.models.Message.class, new MessageExtractor())
                     .build();
 
-    public static ArgumentExtractor[] getArgumentExtractor(Method method, Class<?>[] parmTypes, DefaultListableBeanFactory beanFactory) {
+    public static ArgumentExtractorWrapper[] getArgumentExtractor(Method method, Class<?>[] parmTypes, DefaultListableBeanFactory beanFactory) {
         final Annotation[][] paramAnnotations = method
                 .getParameterAnnotations();
 
-        ArgumentExtractor[] extractors = new ArgumentExtractor[parmTypes.length];
+        ArgumentExtractorWrapper[] extractors = new ArgumentExtractorWrapper[parmTypes.length];
 
         int flag = 0;
         for (int i = 0; i < parmTypes.length; i++) {
@@ -58,8 +58,9 @@ public class ArgumentExtractors {
                 throw new RuntimeException(String.format("%s : 不支持反序列化Optional类型", method));
             }
             ArgumentExtractor<?> extractor = STATIC_EXTRACTORS.get(parameterClass);
-            extractors[i] = extractor;
+            extractors[i] = ArgumentExtractorWrapper.build(extractor, null, parameterClass);
 
+            Annotation ant = null;
             if (extractor == null) {
                 Annotation[] annotations = paramAnnotations[i];
                 for (Annotation annotation : annotations) {
@@ -67,7 +68,7 @@ public class ArgumentExtractors {
                             .getAnnotation(WithArgumentExtractor.class);
                     if (withArgumentExtractor != null) {
                         extractor = instantiateComponent(beanFactory, withArgumentExtractor.value(), annotation);
-                        extractor.init(annotation, parameterClass);
+                        ant = annotation;
                         flag++;
                         break;
                     }
@@ -78,7 +79,7 @@ public class ArgumentExtractors {
                 flag++;
             }
             if (flag == 1) {
-                extractors[i] = extractor;
+                extractors[i] = ArgumentExtractorWrapper.build(extractor,ant,parameterClass);
             }
         }
         return extractors;
@@ -123,15 +124,9 @@ public class ArgumentExtractors {
 
     public static class FastJsonExtractor implements ArgumentExtractor {
 
-        private Class parameterClass;
 
         @Override
-        public void init(Annotation annotation, Class parameterClass) {
-            this.parameterClass = parameterClass;
-        }
-
-        @Override
-        public Result extract(Message message) {
+        public Result extract(Message message,Class parameterClass, Annotation annotation) {
             Object object;
             try {
                 object = JSONObject.parseObject(message.getBody(), parameterClass);
@@ -144,16 +139,12 @@ public class ArgumentExtractors {
 
             return Results.next(object);
         }
+
     }
 
     public static class MessageExtractor implements ArgumentExtractor<Message> {
-
         @Override
-        public void init(Annotation annotation, Class<?> parameterClass) {
-        }
-
-        @Override
-        public Result<Message> extract(Message message) {
+        public Result<Message> extract(Message message,Class<?> parameterClass, Annotation annotation) {
             return Results.next(message);
         }
     }

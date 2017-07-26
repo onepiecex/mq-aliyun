@@ -7,10 +7,6 @@ public class Dish {
     private Long id;
     private String name;
 
-    public Dish(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     public Long getId() {
         return id;

@@ -7,7 +7,7 @@ import com.aliyun.openservices.ons.api.PropertyKeyConst;
 import com.aliyun.openservices.ons.api.order.OrderAction;
 import com.aliyun.openservices.ons.api.order.OrderConsumer;
 import com.github.mq.consumer.models.*;
-import com.github.mq.consumer.parms.ArgumentExtractor;
+import com.github.mq.consumer.parms.ArgumentExtractorWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,16 +91,17 @@ public class ConsumerRun extends Thread {
         }
         int reconsume = tag.getReconsume() == null ? defaultReconsume : tag.getReconsume();
         if (message.getReconsumeTimes() > reconsume) {
-            logger.warn("超过允许的最大重试次数。 允许的重试次数: {}, 当前重试次数: {}", reconsume, message.getReconsumeTimes()) ;
+            logger.warn("超过允许的最大重试次数。 允许的重试次数: {}, 当前重试次数: {} MessageId: {} topic: {} , tag: {}",
+                    reconsume, message.getReconsumeTimes(),message.getMsgID(),message.getTopic(),message.getTag()) ;
             return Action.CommitMessage;
         }
-        ArgumentExtractor[] extractors = tag.getArgumentExtractors();
+        ArgumentExtractorWrapper[] extractors = tag.getArgumentExtractors();
         Object[] parms = new Object[extractors.length];
 
         for (int i = 0;  i< extractors.length; i++) {
-            ArgumentExtractor extractor = extractors[i];
-            if (null != extractor) {
-                Result result = extractor.extract(message);
+            ArgumentExtractorWrapper extractorWrapper = extractors[i];
+            if (null != extractorWrapper) {
+                Result result = extractorWrapper.excuteExtract(message);
                 if (null != result.getAction()) {
                     return result.getAction();
                 }
@@ -112,6 +113,7 @@ public class ConsumerRun extends Thread {
         try {
             action = tag.invoke(parms);
         } catch (RuntimeException e) {
+            logger.error(" MessageId: {} topic: {} , tag: {}",message.getMsgID(),message.getTopic(),message.getTag());
             e.printStackTrace();
         }
         if (null == action) {

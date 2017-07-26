@@ -122,6 +122,35 @@ public class TestConsumer {
 }
 ```
 
+### 重试次数
+```text
+消费业务逻辑代码如果返回
+Action.ReconsumerLater，或者 NULL，或者抛出异常，
+消息都会走重试流程，默认重试 16 次，如果重试 16 次后，仍然失败，则消息丢弃。
+第几次重试	每次重试间隔时间
+1	    10 秒
+2	    30 秒
+3	    1 分钟
+4	    2 分钟
+5	    3 分钟
+6	    4 分钟
+7	    5 分钟
+8	    6 分钟
+9	    7 分钟
+10	    8 分钟
+11	    9 分钟
+12	    10 分钟
+13	    20 分钟
+14	    30 分钟
+15	    1 小时
+16	    2 小时
+
+最大重试次数小于等于16次，则重试时间间隔同上表描述。
+
+最大重试次数大于16次，超过16次的重试时间间隔均为每次2小时。
+```
+     
+
 ## 配置文件 (application.yaml)
 ```yaml
 aliyun :
@@ -151,7 +180,7 @@ aliyun :
       #集群模式: CLUSTERING ,广播模式: BROADCASTING, 缺省: CLUSTERING
       defaultModel : CLUSTERING
 
-      #默认重试次数, 缺省16次
+      #默认重试次数, 缺省16次, 最多16次
       defaultMaxReconsume : 5
 
       #顺序消息消费失败进行重试前的等待时间 单位(毫秒) , 缺省: 100
@@ -213,17 +242,10 @@ public @interface JackJson {
 ```java
 public class JackArgumentExtractor implements ArgumentExtractor {
 
-    private Class parameterClass;
-
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void init(Annotation annotation, Class parameterClass) {
-        this.parameterClass = parameterClass;
-    }
-
-    @Override
-    public Result extract(Message message) {
+    public Result extract(Message message, Class parameterClass, Annotation annotation) {
         byte[] body = message.getBody();
         try {
             return Results.next( mapper.readValue(body,parameterClass));
