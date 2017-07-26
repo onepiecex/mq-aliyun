@@ -23,7 +23,7 @@ import java.util.Set;
 public class OnsImpl implements Ons {
     public static final String MQ_CONSUMER_DEFAULT_THREAD = "aliyun.mq.consumer.defaultThread";
     public static final String MQ_CONSUMER_DEFAULT_MODEL = "aliyun.mq.consumer.defaultModel";
-    public static final String MQ_CONSUMER_DEFAULT_RECONSUME = "aliyun.mq.consumer.defaultReconsume";
+    public static final String MQ_CONSUMER_DEFAULT_MAX_RECONSUME = "aliyun.mq.consumer.defaultMaxReconsume";
     public static final String MQ_CONSUMER_DEFAULT_SUSPEND_TIME = "aliyun.mq.consumer.suspendTime";
 
     public static final String MQ_CONSUMER_PACKAGES = "aliyun.mq.consumer.packages";
@@ -97,7 +97,7 @@ public class OnsImpl implements Ons {
 
         String consumerThread = env.getProperty(MQ_CONSUMER_DEFAULT_THREAD);
         String consumerModel = env.getProperty(MQ_CONSUMER_DEFAULT_MODEL);
-        String consumerMaxReconsume = env.getProperty(MQ_CONSUMER_DEFAULT_RECONSUME);
+        String consumerMaxReconsume = env.getProperty(MQ_CONSUMER_DEFAULT_MAX_RECONSUME);
         String consumerSuspendTime = env.getProperty(MQ_CONSUMER_DEFAULT_SUSPEND_TIME);
 
         if (null != consumerThread) {

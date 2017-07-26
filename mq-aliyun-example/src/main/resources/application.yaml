@@ -26,7 +26,7 @@ aliyun :
       defaultModel : CLUSTERING
 
       #默认重试次数, 缺省16次
-      defaultReconsume : 5
+      defaultMaxReconsume : 5
 
       #顺序消息消费失败进行重试前的等待时间 单位(毫秒) , 默认100
       #仅顺序消息才会生效
