@@ -92,7 +92,7 @@ public class Consumers implements ConsumerAble {
                 .subscribeTag("dish.del",TestConsumer::dishDel);
 
         //订阅顺序消息
-        ons.consumerOrdered("CID_ORDER_TEST_DISH")
+        ons.consumerOrdered("CID_ORDER_TEST_DISH",new ConsumerOptional().setConsumeThread(10))
                 .subscribeTopic("ORDER_TEST")
                 .subscribeTag("dish.add || dish.update",TestConsumer::dishAdd)
                 .subscribeTag("dish.del",TestConsumer::dishDel);
@@ -148,13 +148,13 @@ aliyun :
       #默认消费线程数 , 缺省20
       defaultThread : 10
 
-      #集群模式: CLUSTERING ,广播模式: BROADCASTING
+      #集群模式: CLUSTERING ,广播模式: BROADCASTING, 缺省: CLUSTERING
       defaultModel : CLUSTERING
 
       #默认重试次数, 缺省16次
       defaultMaxReconsume : 5
 
-      #顺序消息消费失败进行重试前的等待时间 单位(毫秒) , 默认100
+      #顺序消息消费失败进行重试前的等待时间 单位(毫秒) , 缺省: 100
       #仅顺序消息才会生效
       suspendTime : 200
 
