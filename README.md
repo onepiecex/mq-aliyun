@@ -47,6 +47,11 @@ public enum  TestProducer {
 `orderSend` 发送[顺序消息](https://help.aliyun.com/document_detail/49319.html?spm=5176.doc29532.6.565.PAkJSD)
 
 ```java
+@Autowired
+private ProducerFactory producerFactory;
+```
+
+```java
 producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish(1L, "name"));
 
 producerFactory.sendAsync(TestProducer.DISH_UPDATE,
