@@ -41,6 +41,11 @@ public enum  TestProducer {
 ```
 
 ### 消息发送
+
+`sendAsync` 发送无序消息
+
+`orderSend` 发送[顺序消息](https://help.aliyun.com/document_detail/49319.html?spm=5176.doc29532.6.565.PAkJSD)
+
 ```java
 producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish(1L, "name"));
 
@@ -67,24 +72,26 @@ producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {
 SendResult sendResult = producerFactory.orderSend(......);
 ```
 
-`sendAsync` 发送无序消息
-
-`orderSend` 发送[顺序消息](https://help.aliyun.com/document_detail/49319.html?spm=5176.doc29532.6.565.PAkJSD)
-
 ## 消费者定义
 
 使用声明式集中定义, 方便后期维护
 
 ```java
 public class Consumers implements ConsumerAble {
-
     @Override
     public void init(Ons ons) {
+
+        //订阅普通消息(无序)
         ons.consumer("CID_TEST_DISH")
                 .subscribeTopic("TEST")
                 .subscribeTag("dish.add || dish.update",TestConsumer::dishAdd)
                 .subscribeTag("dish.del",TestConsumer::dishDel);
 
+        //订阅顺序消息
+        ons.consumerOrdered("CID_ORDER_TEST_DISH")
+                .subscribeTopic("ORDER_TEST")
+                .subscribeTag("dish.add || dish.update",TestConsumer::dishAdd)
+                .subscribeTag("dish.del",TestConsumer::dishDel);
     }
 }
 ```
