@@ -51,7 +51,7 @@ public class Application implements CommandLineRunner {
             }
         });
 
-        producerFactory.orderSend(OrderProducer.SEND_MAIL,"message","shardingKey");
+        SendResult sendResult = producerFactory.orderSend(OrderProducer.SEND_MAIL,"message","shardingKey");
     }
 
 

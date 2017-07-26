@@ -64,10 +64,11 @@ producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {
 ```
 `发送顺序消息时 需要使用orderSend发送标记了ordered = true 的生产者`
 ```java
-producerFactory.orderSend(......);
+SendResult sendResult = producerFactory.orderSend(......);
 ```
 
-
+`sendAsync` 发送无序消息
+`orderSend` 发送[顺序消息](https://help.aliyun.com/document_detail/49319.html?spm=5176.doc29532.6.565.PAkJSD)
 
 ## 消费者定义
 
@@ -156,7 +157,7 @@ aliyun :
 
 ### 这里我拿 jackJson 序列化 和 反序列化举例子
 
-#### 自定义发送消息的序列方式
+#### 自定义发送消息的序列化方式
 ```
 - resources
   - META-INF
