@@ -82,17 +82,17 @@ public class OnsImpl implements Ons {
 
         accessKey = env.getProperty(MqConstant.ACCESS_KEY);
         if (null == accessKey || accessKey.trim().isEmpty()) {
-            throw new RuntimeException(String.format("mq 启动失败, %s is require", MqConstant.ACCESS_KEY));
+            throw new RuntimeException(String.format("mq消费者 启动失败, %s is require", MqConstant.ACCESS_KEY));
         }
 
         secretKey = env.getProperty(MqConstant.SECRET_KEY);
         if (null == secretKey || secretKey.trim().isEmpty()) {
-            throw new RuntimeException(String.format("mq 启动失败, %s is require", MqConstant.SECRET_KEY));
+            throw new RuntimeException(String.format("mq消费者 启动失败, %s is require", MqConstant.SECRET_KEY));
         }
 
         suffix = env.getProperty(MqConstant.MQ_SUFFIX);
         if (null == suffix || suffix.trim().isEmpty()) {
-            throw new RuntimeException(String.format("mq 启动失败, %s is require", MqConstant.MQ_SUFFIX));
+            throw new RuntimeException(String.format("mq消费者 启动失败, %s is require", MqConstant.MQ_SUFFIX));
         }
 
         String consumerThread = env.getProperty(MQ_CONSUMER_DEFAULT_THREAD);

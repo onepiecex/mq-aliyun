@@ -174,23 +174,23 @@ public class ProducerFactoryImpl implements ProducerFactory {
     public void init(Environment env) {
         String package_ = env.getProperty(MQ_PRODUCER_PACKAGES);
         if (null == package_) {
-            throw new RuntimeException(String.format("mq 启动失败, %s is require", MQ_PRODUCER_PACKAGES));
+            throw new RuntimeException(String.format("mq生产者 启动失败, %s is require", MQ_PRODUCER_PACKAGES));
         }
         packages = package_.split(",");
 
         accessKey = env.getProperty(MqConstant.ACCESS_KEY);
         if (null == accessKey || accessKey.trim().isEmpty()) {
-            throw new RuntimeException(String.format("mq 启动失败, %s is require", MqConstant.ACCESS_KEY));
+            throw new RuntimeException(String.format("mq生产者 启动失败, %s is require", MqConstant.ACCESS_KEY));
         }
 
         secretKey = env.getProperty(MqConstant.SECRET_KEY);
         if (null == secretKey || secretKey.trim().isEmpty()) {
-            throw new RuntimeException(String.format("mq 启动失败, %s is require", MqConstant.SECRET_KEY));
+            throw new RuntimeException(String.format("mq生产者 启动失败, %s is require", MqConstant.SECRET_KEY));
         }
 
         suffix = env.getProperty(MqConstant.MQ_SUFFIX);
         if (null == suffix || suffix.trim().isEmpty()) {
-            throw new RuntimeException(String.format("mq 启动失败, %s is require", MqConstant.MQ_SUFFIX));
+            throw new RuntimeException(String.format("mq生产者 启动失败, %s is require", MqConstant.MQ_SUFFIX));
         }
         String timeout = env.getProperty(MQ_PRODUCER_SEND_MSG_TIMEOUT);
         if (null != timeout && !timeout.isEmpty()) {
