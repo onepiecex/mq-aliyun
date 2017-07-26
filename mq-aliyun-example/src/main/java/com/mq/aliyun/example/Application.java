@@ -28,32 +28,25 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish());
+        producerFactory.sendAsync(TestProducer.DISH_ADD, new Dish(1L, "name"));
 
-        Dish dish = new Dish();
-        dish.setId(2L);
-        dish.setName("www");
-        producerFactory.sendAsync(TestProducer.DISH_UPDATE, dish,
+        producerFactory.sendAsync(TestProducer.DISH_UPDATE,
+                new Dish(2L, "name"),
                 new DeliveryOption("key").setDeliverTime(System.currentTimeMillis() + 1000 * 60));
 
         producerFactory.sendAsync(TestProducer.DISH_DEL, 1L, new SendCallback() {
             @Override
             public void onSuccess(SendResult sendResult) {
-                System.out.println(sendResult);
                 //send success
                 //do some thing...
             }
 
             @Override
             public void onException(OnExceptionContext context) {
-                System.out.println(context);
                 //send fail
                 //do some thing...
             }
         });
-
         SendResult sendResult = producerFactory.orderSend(OrderProducer.SEND_MAIL,"message","shardingKey");
     }
-
-
 }

@@ -6,7 +6,12 @@ package com.mq.aliyun.example.model;
 public class Dish {
     private Long id;
     private String name;
+    public Dish(){}
 
+    public Dish(Long id,String name){
+        this.id = id;
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
