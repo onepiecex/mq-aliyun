@@ -7,7 +7,7 @@
 <dependency>
   <groupId>com.github.onepiecex</groupId>
   <artifactId>mq-aliyun-producer-spring-boot-starter</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 消费者
@@ -15,7 +15,7 @@
 <dependency>
   <groupId>com.github.onepiecex</groupId>
   <artifactId>mq-aliyun-consumer-spring-boot-starter</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
