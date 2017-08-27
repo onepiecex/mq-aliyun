@@ -65,14 +65,14 @@ public class ConsumerRun extends Thread {
             OrderConsumer orderConsumer = ONSFactory.createOrderedConsumer(properties);
 
             orderConsumer.subscribe(topic,tags,((message, context) ->
-                    dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.CommitMessage)?
+                    dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.commit)?
                             OrderAction.Success : OrderAction.Suspend
             ));
             orderConsumer.start();
         } else {
             Consumer consumer = ONSFactory.createConsumer(properties);
             consumer.subscribe(topic, tags, (message, context) ->
-                    dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.CommitMessage)?
+                    dispatch(consumerId, message, consumerOptional.getMaxReconsume()).equals(Action.commit)?
                             com.aliyun.openservices.ons.api.Action.CommitMessage : com.aliyun.openservices.ons.api.Action.ReconsumeLater
             );
             consumer.start();
@@ -93,7 +93,7 @@ public class ConsumerRun extends Thread {
         if (message.getReconsumeTimes() > reconsume) {
             logger.warn("超过允许的最大重试次数。 允许的重试次数: {}, 当前重试次数: {} MessageId: {} topic: {} , tag: {}",
                     reconsume, message.getReconsumeTimes(),message.getMsgID(),message.getTopic(),message.getTag()) ;
-            return Action.CommitMessage;
+            return Action.commit;
         }
         ArgumentExtractorWrapper[] extractors = tag.getArgumentExtractors();
         Object[] parms = new Object[extractors.length];
@@ -117,7 +117,7 @@ public class ConsumerRun extends Thread {
             e.printStackTrace();
         }
         if (null == action) {
-            return Action.ReconsumeLater;
+            return Action.reconsume;
         }
         return (Action) action;
     }

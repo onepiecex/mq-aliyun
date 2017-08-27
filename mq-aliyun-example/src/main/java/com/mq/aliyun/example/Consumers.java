@@ -13,8 +13,8 @@ public class Consumers implements ConsumerAble {
     @Override
     public void init(Ons ons) {
         //订阅普通消息(无序)
-        ons.consumer("CID_TEST")
-                .subscribeTopic("TEST")
+        ons.consumer("CID_MEICANYUN_ORDER")
+                .subscribeTopic("MEICANYUN")
                 .subscribeTag("dish.add || dish.update",TestConsumer::dishAdd)
                 .subscribeTag("dish.del",TestConsumer::dishDel);
 

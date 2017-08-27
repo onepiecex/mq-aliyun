@@ -9,6 +9,6 @@ public class TestConsumer {
 
     public Action test(){
 
-        return Action.CommitMessage;
+        return Action.commit;
     }
 }

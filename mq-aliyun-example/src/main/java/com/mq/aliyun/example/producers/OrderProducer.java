@@ -6,8 +6,8 @@ import com.github.mq.producer.models.To;
 /**
  * Created by wangziqing on 17/7/26.
  */
-@Pid(value = "PID_TEST" , ordered = true)
+@Pid(value = "PID_MEICANYUN" , ordered = true)
 public enum  OrderProducer {
-    @To(topic = "topic",tag = "send.mail")
+    @To(topic = "MEICANYUN_SHARDING",tag = "send.mail")
     SEND_MAIL;
 }

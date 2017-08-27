@@ -134,7 +134,7 @@ public class ArgumentExtractors {
                 e.printStackTrace();
                 logger.error(String.format("%s 反序列化失败 by : %s",
                         parameterClass, JSONObject.parseObject(message.getBody(), Object.class)));
-                return Results.end(Action.CommitMessage);
+                return Results.end(Action.commit);
             }
 
             return Results.next(object);

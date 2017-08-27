@@ -14,7 +14,7 @@ public class TestConsumer {
     @Reconsume(3)
     public Action dishAdd(Dish dish){
         //do some thine
-        return Action.CommitMessage;
+        return Action.commit;
     }
 
 
@@ -22,11 +22,11 @@ public class TestConsumer {
         //Message 为阿里云mq 原生消息体
 
         //do some thing
-        return Action.CommitMessage;
+        return Action.commit;
     }
 
     public Action jackjson(@JackJson Dish dish){
         //do some thine
-        return Action.CommitMessage;
+        return Action.commit;
     }
 }

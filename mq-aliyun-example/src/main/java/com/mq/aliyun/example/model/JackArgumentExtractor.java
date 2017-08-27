@@ -25,6 +25,6 @@ public class JackArgumentExtractor implements ArgumentExtractor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Results.end(Action.CommitMessage);
+        return Results.end(Action.commit);
     }
 }
