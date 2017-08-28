@@ -125,7 +125,7 @@ public class TestConsumer {
 ### 重试次数
 ```text
 消费业务逻辑代码如果返回
-Action.ReconsumerLater，或者 NULL，或者抛出异常，
+Action.reconsume，或者 NULL，或者抛出异常，
 消息都会走重试流程，默认重试 16 次，如果重试 16 次后，仍然失败，则消息丢弃。
 
 第几次重试     每次重试间隔时间
